@@ -1,0 +1,41 @@
+####### Build tools #######
+### Maven / Maven wrapper
+**/target/
+.mvn/
+
+### Gradle
+build/
+
+####### Other SCMs/VCSs #######
+### Subversion
+.svn
+
+### Mercurial
+.hg
+
+####### IDEs #######
+### Eclipse/STS-eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/build/
+
+### VS Code ###
+.vscode/
