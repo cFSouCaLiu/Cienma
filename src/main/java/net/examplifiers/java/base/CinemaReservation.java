@@ -14,8 +14,51 @@ import java.util.Scanner;
  */
 public class CinemaReservation {
 
-	public static final int MAX_ROWS = 8;
-	public static final int PLACES_PER_ROW = 9;
+	/** The number of the desired places to indicate that no more reservations are desired, in which case the program will exit. */
+	public static final int PLACES_PER_ROW_EXIT_VALUE = 0;
+	
+	/** The number of rows in the cinema (default: 8); can be modified using the 1st argument of the {@link #main(String[])} method */
+	private static int MAX_ROWS = 8;
+	/** The number of places per row in the cinema (default: 9); can be modified using the 2nd argument of the {@link #main(String[])} method */
+	private static int PLACES_PER_ROW = 9;
+	/** Flag to indicate whether we want an initial population of the occupied places in the cinema (default: <code>true</code>); can be modified using the 3rd argument of the {@link #main(String[])} method */
+	private static boolean POPULATES_CINEMA_PLACES = true;
+
+
+	/** Can be executed with an empty array of arguments <code>args</code> 
+	 * or with an array of 3 <code>String</code> values: <ul>
+	 * <li>
+	 *     2 <code>int</code>s (the number of rows in the cinema, respectively the number of places per row in the cinema)
+	 * </li>
+	 * <li>
+	 *     and a <code>boolean</code> for indicating whether we want an initial population of the occupied places in the cinema
+	 * </li>
+	 * </ul>
+	 */
+	public static void main(String[] args) {
+		if (args.length >= 3) {
+			MAX_ROWS = Integer.parseInt(args[0]);
+			PLACES_PER_ROW = Integer.parseInt(args[1]);
+			POPULATES_CINEMA_PLACES = Boolean.parseBoolean(args[2]);
+		}
+		
+		final CinemaReservation cinemaReservation = new CinemaReservation();
+		final boolean[][] allPlaces = cinemaReservation.createCinemaPlacesMatrix();
+		if (POPULATES_CINEMA_PLACES) {
+			cinemaReservation.randomlyPopulateCinemaPlacesMatrix(allPlaces);
+		}
+
+		System.out.println("Initial configuration of cinema:");
+		cinemaReservation.displayCinemaPlacesLayout(allPlaces);
+		System.out.println();
+
+		cinemaReservation.findIfReservationIsPossible(allPlaces, -1,
+				-1); // we impose absurd negative entries, to force the initial appeal to user input
+
+		System.out.println("Final configuration of cinema:");
+		cinemaReservation.displayCinemaPlacesLayout(allPlaces);
+	}
+
 
 	private void findIfReservationIsPossible(final boolean[][] allPlaces, int rowNum, int numPlaces) {
 		boolean flagFoundReservation;
@@ -26,7 +69,7 @@ public class CinemaReservation {
 			numPlaces = rowNumAndNumPlaces[1];
 		}
 
-		if (numPlaces == 0) {
+		if (numPlaces == PLACES_PER_ROW_EXIT_VALUE) {
 			System.out.println("User indicated that no more reservations are desired, exiting.");
 			return;
 		}
@@ -71,8 +114,8 @@ public class CinemaReservation {
 
 	private int[] displayReservationInvitation() {
 		System.out.println("Please enter the number of the row and, after a space, the number of the desired places");
-		System.out.println(
-				"Enter 0 for the number of the desired places to indicate that no more reservations are desired, program will exit.");
+		System.out.println(String.format(
+				"Enter %d for the number of the desired places to indicate that no more reservations are desired, program will exit.", PLACES_PER_ROW_EXIT_VALUE));
 		final Scanner sc = new Scanner(System.in);
 		final int rowNum = sc.nextInt();
 		final int numPlaces = sc.nextInt();
@@ -125,26 +168,6 @@ public class CinemaReservation {
 
 		allPlaces[1][1] = allPlaces[1][2] = allPlaces[1][3] = true;
 		allPlaces[3][0] = allPlaces[3][1] = allPlaces[3][6] = allPlaces[3][5] = true;
-	}
-
-	public static void main(String[] args) {
-		final CinemaReservation cinemaReservation = new CinemaReservation();
-		// final int[] rowNumAndNumPlaces = cinemaReservation.displayReservationInvitation();
-		// System.out.println(String.format("Entered rowNum = %d and numPlaces = %d.", rowNumAndNumPlaces[0], rowNumAndNumPlaces[1]));
-
-		// final boolean[][] allPlaces = new boolean[MAX_ROWS][PLACES_PER_ROW];
-		final boolean[][] allPlaces = cinemaReservation.createCinemaPlacesMatrix();
-		cinemaReservation.randomlyPopulateCinemaPlacesMatrix(allPlaces);
-
-		System.out.println("Initial configuration of cinema:");
-		cinemaReservation.displayCinemaPlacesLayout(allPlaces);
-		System.out.println();
-
-		cinemaReservation.findIfReservationIsPossible(allPlaces, -1,
-				-1); // we impose absurd negative entries, to force the initial appeal to user input
-
-		System.out.println("Final configuration of cinema:");
-		cinemaReservation.displayCinemaPlacesLayout(allPlaces);
 	}
 
 }
