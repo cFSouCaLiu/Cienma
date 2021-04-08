@@ -12,7 +12,7 @@ import java.util.Scanner;
  * - Si tel est le cas, vous affichez la représentation de la salle à l'utilisateur et proposez une nouvelle saisie. 
  * - Sinon, vous spécifiez à l'utilisateur qu'il n'y a plus de place sur la rangée ou qu'il n'y en a pas assez. 
  */
-public class CinemaReservationMAX {
+public class CinemaReservation {
 
 	public static final int MAX_ROWS = 8;
 	public static final int PLACES_PER_ROW = 9;
@@ -40,7 +40,7 @@ public class CinemaReservationMAX {
 					rowPlaces[i + j] = false;
 				}
 				flagFoundReservation = true; // we have found (&committed) a reservation...
-				break; // ...so we do not test any more other positions as eligible!
+				break; // ... so we do not test any more other positions as eligible!
 			}
 		}
 
@@ -59,12 +59,12 @@ public class CinemaReservationMAX {
 		if (!rowPlaces[crntPlaceIndex]) {
 			return false;
 		}
-		if (crntPlaceIndex + numPlaces > rowPlaces.length) { // todo recheck
+		if (crntPlaceIndex + numPlaces > rowPlaces.length) {
 			return false;
 		}
 		boolean isEligible = true;
 		for (int i = 0; i < numPlaces; i++) {
-			isEligible &= rowPlaces[crntPlaceIndex + i]; // todo recheck
+			isEligible &= rowPlaces[crntPlaceIndex + i];
 		}
 		return isEligible;
 	}
@@ -113,8 +113,8 @@ public class CinemaReservationMAX {
 		return new boolean[MAX_ROWS][PLACES_PER_ROW];
 	}
 
-	/** HERE I HAVE PUT A DUMMY INITIALIZATION OF THE CINEMA HALL...just for testing... 
-	 * (not really necessary for the time being)
+	/** HERE I HAVE PUT A DUMMY INITIALIZATION OF THE CINEMA HALL
+	 * (not really necessary for the time being...just for testing...)
 	 */
 	private void randomlyPopulateCinemaPlacesMatrix(final boolean[][] allPlaces) {
 		for (int k = 1; k < MAX_ROWS; k++) {
@@ -128,9 +128,9 @@ public class CinemaReservationMAX {
 	}
 
 	public static void main(String[] args) {
-		final CinemaReservationMAX cinemaReservation = new CinemaReservationMAX();
-		//        final int[] rowNumAndNumPlaces = cinemaReservation.displayReservationInvitation();
-		//        System.out.println(String.format("Entered rowNum = %d and numPlaces = %d.", rowNumAndNumPlaces[0], rowNumAndNumPlaces[1]));
+		final CinemaReservation cinemaReservation = new CinemaReservation();
+		// final int[] rowNumAndNumPlaces = cinemaReservation.displayReservationInvitation();
+		// System.out.println(String.format("Entered rowNum = %d and numPlaces = %d.", rowNumAndNumPlaces[0], rowNumAndNumPlaces[1]));
 
 		// final boolean[][] allPlaces = new boolean[MAX_ROWS][PLACES_PER_ROW];
 		final boolean[][] allPlaces = cinemaReservation.createCinemaPlacesMatrix();
@@ -141,10 +141,10 @@ public class CinemaReservationMAX {
 		System.out.println();
 
 		cinemaReservation.findIfReservationIsPossible(allPlaces, -1,
-				-1); //we impose absurd negative entries, to force the initial appeal to user input
+				-1); // we impose absurd negative entries, to force the initial appeal to user input
 
 		System.out.println("Final configuration of cinema:");
 		cinemaReservation.displayCinemaPlacesLayout(allPlaces);
-
 	}
+
 }
