@@ -3,76 +3,71 @@ package net.examplifiers.java.base;
 import java.util.Scanner;
 
 /**
- * Cinematografele SimplonTheater au nevoie de un soft simplu pentru a permite utilizatorilor să facă acest lucru :
- * a alege locuri de cinema într-o sală cu format fix , anume 8 rânduri cu 9 locuri pe fiecare rând.
- * Utilizatorii trebuie să poată specifica rândul în care doresc să fie plasati, precum și numărul de locuri de rezervat.
- * Odată ce rândul a fost ales și numărul de locuri specificat, trebuie să verificați dacă există într-adevăr suficient
- * spațiu pe acel rând :
- * - Dacă acesta este cazul, afișați reprezentarea sălii către utilizator și propuneți o nouă intrare tastatură (keyboard input).
- * - În caz contrar, îi spuneți utilizatorului că nu mai există spațiu în rând sau că nu este suficient.
- * Exemplu de redare (rendering) :
+ * This variant solves the problem of finding <code>N</code> consecutive vacancies in a row by turning the line into a string
+ * like &quot;00XX00XXXX .... X0..XXX ... 0 .... X00&quot;, where the &quot;X&quot; marks the occupied places,
+ * and &quot;0&quot; the free ones.<br />
+ * Then we create the target string &quot;000 ... 00&quot; of length <code>N</code> and we use directly the facilities of the
+ * <code>String</code> class (namely <code>indexOf</code>) to immediately find out at what position we find the target string in
+ * the &quot;string&quot; (if ever).<br />
+ * For this purpose, we introduced a method like <code>convertRowToString()</code>, which, with a little refinement, could be used
+ * to print the row (in the current variant we did not do so, it was too much work), as well as for other similar finer features,
+ * e.g. to suggest to the user several starting positions for the <code>N</code> places, if such a thing exists ... and so on.<br />
+ * But this is just a &quot;toy&quot; solution, it works for the current situation, where the matrix of places is not big, but in
+ * the general case we don&apos;t think it is advisable.
+ * 
+ * @author <a href="mailto:Maxim.Cruceanu@outlook.com">p. Maxim</a>
+ * @version 2021-04-09
  */
 public class CinemaReservationProvider {
 
-	public static final int TOTAL_ROWS = 8;
+	public static final int MAX_ROWS = 8;
 	public static final int PLACES_PER_ROW = 9;
 
 	public static final boolean FREE_SEAT = true;
 	public static final boolean OCCUPIED_SEAT = false;
+	private static final String FREE_SEAT_STRING = "0";
+	private static final String OCCUPIED_SEAT_STRING = "X";
 
 	private int rowRequested;
 	private int numSeatsRequested;
 	private int startingPosition;
 
 	public static void main(String[] args) {
-
-		boolean[][] allPlaces_Matrix = new boolean[TOTAL_ROWS][PLACES_PER_ROW];
-		boolean ExitCondition_flag;
+		final CinemaReservationProvider c = new CinemaReservationProvider();
+		final boolean[][] allPlacesMatrix = c.initializeCinemaPlaces();
+		boolean exitConditionFlag = false;
 		boolean validInput;
 		boolean foundAvailablePlaces;
 
-		final CinemaReservationProvider c = new CinemaReservationProvider();
-
-		allPlaces_Matrix = c.initializeCinemaPlaces();
-
-		//OPTIONAL:
+		// OPTIONAL:
 		System.out.println("Initial configuration of cinema:");
-		c.displayCinemaPlacesLayout(allPlaces_Matrix);
+		c.displayCinemaPlacesLayout(allPlacesMatrix);
 		System.out.println();
 
-		ExitCondition_flag = false;
-		while (!ExitCondition_flag) {
-
-			validInput = c.requestAndCheckUserInput();  //ask for a reservation from the user, and check it
-
+		while (!exitConditionFlag) {
+			validInput = c.requestAndCheckUserInput(); // ask for a reservation from the user, and check it
 			if (validInput) {
-
-				foundAvailablePlaces = c.checkAvailabilityOfPlaces(allPlaces_Matrix, c.rowRequested, c.numSeatsRequested);
-
-				c.displayAffirmativeOrNegativeConfirmation(allPlaces_Matrix, foundAvailablePlaces);
-
+				foundAvailablePlaces = c.checkAvailabilityOfPlaces(allPlacesMatrix, c.rowRequested, c.numSeatsRequested);
+				c.displayAffirmativeOrNegativeConfirmation(allPlacesMatrix, foundAvailablePlaces);
 			} else {
-				ExitCondition_flag = true;
-			} //exit the user-interrogation cycle, based on user termination and/or bad input
+				exitConditionFlag = true;
+			} // exit the user-interrogation cycle, based on user termination and/or bad input
+		} // end interrogation-loop
 
-		} //end interrogation-loop
-
-		//OPTIONAL:
+		// OPTIONAL:
 		System.out.println("Final configuration of cinema:");
-		c.displayCinemaPlacesLayout(allPlaces_Matrix);
+		c.displayCinemaPlacesLayout(allPlacesMatrix);
 		System.out.println();
 
-	} //END of Main---------------------------------------------
+	} // END of main ---------------------------------------------
 
 	private boolean[][] initializeCinemaPlaces() {
-
-		//Here we could have the CinemaPopulation Matrix taken from another CinemaReservationProvider object...
+		// Here we could have the CinemaPopulation Matrix taken from another CinemaReservationProvider object...
 		// ... or randomly initialized like e.g. boolean[][] allCinemaPlacesMatrix = c.createRandomCinemaPlacesMatrix();
 		// But for now, we simply write an arbitrary matrix:
+		final boolean[][] allPlaces = new boolean[MAX_ROWS][PLACES_PER_ROW];
 
-		final boolean[][] allPlaces = new boolean[TOTAL_ROWS][PLACES_PER_ROW];
-
-		for (int k = 0; k < TOTAL_ROWS; k++) {
+		for (int k = 0; k < MAX_ROWS; k++) {
 			for (int l = 0; l < PLACES_PER_ROW; l++) {
 				allPlaces[k][l] = FREE_SEAT;
 			}
@@ -90,26 +85,25 @@ public class CinemaReservationProvider {
 	}
 
 	private boolean requestAndCheckUserInput() {
+		final int[] userReservationInput = displayReservationInvitation();
+		final int rowInput = userReservationInput[0];
+		final int numPlacesInput = userReservationInput[1];
 
-		int[] userReservationInput = displayReservationInvitation();
-		int rowInput = userReservationInput[0];
-		int numPlacesInput = userReservationInput[1];
-
-		if ((rowInput < 0) || (rowInput >= TOTAL_ROWS)) {
+		if ((rowInput < 0) || (rowInput >= MAX_ROWS)) {
 			System.out.println();
-			System.out.print("BAD ROW INPUT, exiting ....");
+			System.err.print("BAD ROW INPUT, exiting ....");
 			return false;
 		}
 
 		if ((numPlacesInput < 0) || (numPlacesInput > PLACES_PER_ROW)) {
 			System.out.println();
-			System.out.print("BAD INPUT FOR NUMBER OF CONTIGUOUS PLACES , exiting ....");
+			System.err.print("BAD INPUT FOR NUMBER OF CONTIGUOUS PLACES, exiting ....");
 			return false;
 		}
 
 		if (numPlacesInput == 0) {
 			System.out.println();
-			System.out.print("NO MORE PLACES REQUESTED , exiting ....");
+			System.out.print("NO MORE PLACES REQUESTED, exiting ....");
 			return false;
 		}
 
@@ -131,43 +125,39 @@ public class CinemaReservationProvider {
 		return new int[] { rowNum, numPlaces };
 	}
 
-	private boolean checkAvailabilityOfPlaces(final boolean[][] allCinemaPlacesMatrix, int rowNum, int numPlaces) {
-
-		boolean[] rowPlaces = allCinemaPlacesMatrix[rowNum];
-		String testedSTRING = convertRowToString(rowPlaces);
+	private boolean checkAvailabilityOfPlaces(final boolean[][] allCinemaPlacesMatrix, final int rowNum, final int numPlaces) {
+		final boolean[] rowPlaces = allCinemaPlacesMatrix[rowNum];
+		final String testedString = convertRowToString(rowPlaces);
 		// the above is a string of the type "00X0XXX0...0X...X..0", with "X" marking occupied seats, "0" free ones
 
-		String targetSTRING = "0";
+		final StringBuilder targetStringBuilder = new StringBuilder(FREE_SEAT_STRING);
 		for (int i = 1; i < numPlaces; i++) {
-			targetSTRING += "0";
+			targetStringBuilder.append(FREE_SEAT_STRING);
 		}
-		//we have now generated the string "0000...0...00" of length= numPlaces (all free seats)
+		final String targetString = targetStringBuilder.toString();
+		// now we have generated the string "0000...0...00" of length = numPlaces (all free seats)
 
-		startingPosition = testedSTRING
-				.indexOf(targetSTRING); //we search for the first position (if ever) of numPlaces consecutive free seats
+		// we search for the first position (if ever) of numPlaces consecutive free seats
+		startingPosition = testedString.indexOf(targetString);
 
-		return startingPosition != -1;  //if target string is not found (->negative index), we return false
-
+		return (startingPosition >= 0); // if target string is not found (-> negative index), we return false
 	}
 
-	private String convertRowToString(boolean[] rowPlaces) {
-		int len = rowPlaces.length;
-		String result = "";
-		for (int i = 0; i < len; i++) {
-			result += (rowPlaces[i]) ? "0" : "X";
-
+	private String convertRowToString(final boolean[] rowPlaces) {
+		final StringBuilder result = new StringBuilder();
+		for (int i = 0, len = rowPlaces.length; i < len; i++) {
+			result.append((rowPlaces[i]) ? FREE_SEAT_STRING : OCCUPIED_SEAT_STRING);
 		}
-		return result;
+		return result.toString();
 	}
 
-	private void displayAffirmativeOrNegativeConfirmation(boolean[][] allPlaces, boolean foundAvailablePlaces) {
+	private void displayAffirmativeOrNegativeConfirmation(final boolean[][] allPlaces, final boolean foundAvailablePlaces) {
 		if (foundAvailablePlaces) {
 			displayAffirmativeReservationMessage(rowRequested, numSeatsRequested, startingPosition);
 			displayReservedPlacesLayout(allPlaces, rowRequested, startingPosition, numSeatsRequested);
 			for (int k = startingPosition; k <= startingPosition + numSeatsRequested - 1; k++) {
 				allPlaces[rowRequested][k] = OCCUPIED_SEAT;
 			}
-
 		} else {
 			displayNegativeReservationMessage(rowRequested, numSeatsRequested);
 		}
@@ -179,65 +169,61 @@ public class CinemaReservationProvider {
 		System.out.println(String.format("BINGO!!! Found and reserved %d consecutive places on row %d starting with place no. %d"
 				+ " and ending with place no. %d.", numPlaces, rowNum, firstFreePlaceIndex, (firstFreePlaceIndex + numPlaces - 1)));
 		System.out.println();
-
 	}
 
 	private void displayNegativeReservationMessage(final int rowNum, final int numPlaces) {
 		System.out.println();
 		System.out.println("---------------------------------------------------------------------------------");
-		System.out.println(
-				String.format("SORRY!! Could not find %d consecutive places on row %d. Please try again...", numPlaces, rowNum));
+		System.out.println(String.format("SORRY!! Could not find %d consecutive places on row %d. Please try again...",
+				numPlaces, rowNum));
 		System.out.println();
 	}
 
-	private void displayReservedPlacesLayout(final boolean[][] allPlaces, int rowReserved, int startingPosition,
-			int numSeatsRequested) {
-
+	private void displayReservedPlacesLayout(final boolean[][] allPlaces, final int rowReserved, final int startingPosition,
+			final int numSeatsRequested) {
 		System.out.println();
 		System.out.print("Seats#:");
 		for (int k = 0; k < PLACES_PER_ROW; k++) {
 			System.out.print("  " + k + "   ");
-		}    // we print first the table header
+		} // we print first the table header
 
-		for (int i = 0; i < TOTAL_ROWS; i++) {
-
+		for (int i = 0; i < MAX_ROWS; i++) {
 			System.out.println();
-			System.out.println(
-					"=================================================================================="); //row separator, again
+			// row separator, again
+			System.out.println("==================================================================================");
 
 			System.out.print("Row " + i + ":");
 			for (int j = 0; j < PLACES_PER_ROW; j++) {
 				boolean placeIsReserved = (i == rowReserved) && (j >= startingPosition) && (j <= startingPosition + numSeatsRequested - 1);
 				System.out.print(" " + (placeIsReserved ? " [*] " : " [ ] "));
 			}
-		} //end printing cycle just for newly reserved seats
+		} // end printing cycle just for newly reserved seats
 
 		System.out.println();
 		System.out.println();
-	} //end display reserved-seats
+	} // end display reserved-seats
 
 	private void displayCinemaPlacesLayout(final boolean[][] allPlaces) {
-
 		System.out.println();
 		System.out.print("Seats#:");
+		// first we print the table header
 		for (int k = 0; k < PLACES_PER_ROW; k++) {
 			System.out.print("  " + k + "   ");
-		}    // we print first the table header
+		}
 
-		for (int i = 0; i < TOTAL_ROWS; i++) {
-
+		for (int i = 0; i < MAX_ROWS; i++) {
 			System.out.println();
-			System.out.println(
-					"=================================================================================="); //this is a row separator
+			// this is a row separator
+			System.out.println("==================================================================================");
 
 			System.out.print("Row " + i + ":");
 			for (int j = 0; j < PLACES_PER_ROW; j++) {
-				System.out.print(" " + (allPlaces[i][j] ? " [0] " : " [X] "));
+				System.out.print(" " + (allPlaces[i][j] ? " [" + FREE_SEAT_STRING + "] " : " [" + OCCUPIED_SEAT_STRING + "] "));
 			}
-		} //end printing cycle for all occupied seats in cinema
+		} // end printing cycle for all occupied seats in cinema
 
 		System.out.println();
 		System.out.println();
 	}
 
-} // END CLASS
+}
