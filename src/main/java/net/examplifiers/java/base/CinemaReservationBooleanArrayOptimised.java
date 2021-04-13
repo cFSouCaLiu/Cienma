@@ -4,7 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * Performs the cinema reservation by treating the cinema places as a bi-dimensional <code>boolean</code> array
- * and searching within the unidimensional array that is an element of the bi-dimensional one.
+ * and searching within the unidimensional array that is an element of the bi-dimensional one.<br />
+ * This variant is slightly more optimized than the algorithm from the {@link CinemaReservation} class;
+ * when scanning the row for reservation, the index of the current place (to be tested if it's eligible) is not incremented by 1,
+ * but by skipping to the next block of free places.
+ * It's probably a little faster, but less readable than the variant from CinemaReservation.<br />
+ * Also introduced the printing of the just reserved places (as it was required, btw) after each reservation validated by the program.
  *
  * @author <a href="mailto:Maxim.Cruceanu@outlook.com">p. Maxim</a>
  * @author <a href="mailto:emil_soucaliuc@hotmail.com">Emil Șoucaliuc</a>
@@ -55,23 +60,23 @@ public class CinemaReservationBooleanArrayOptimised extends AbstractCinemaReserv
 		 */
 
 		proceedWithArguments(args);
-		final AbstractCinemaReservation cinemaReservation = getConcreteSubclass().getDeclaredConstructor().newInstance();
+		final CinemaReservationBooleanArrayOptimised cinemaReservation = new CinemaReservationBooleanArrayOptimised();
 		final boolean[][] allPlaces = getInitialCinemaPlacesStatus(cinemaReservation);
 
 		System.out.println("Initial configuration of cinema:");
-		((CinemaReservationBooleanArrayOptimised) cinemaReservation).displayCinemaPlacesEnrichedLayout(allPlaces, false,
-				((CinemaReservationBooleanArrayOptimised) cinemaReservation).rowReserved,
-				((CinemaReservationBooleanArrayOptimised) cinemaReservation).startingPosition,
-				((CinemaReservationBooleanArrayOptimised) cinemaReservation).endPosition);
+		cinemaReservation.displayCinemaPlacesEnrichedLayout(allPlaces, false,
+				cinemaReservation.rowReserved,
+				cinemaReservation.startingPosition,
+				cinemaReservation.endPosition);
 		System.out.println();
 
 		cinemaReservation.doReservationIfPossible(allPlaces);
 
 		System.out.println("Final configuration of cinema:");
-		((CinemaReservationBooleanArrayOptimised) cinemaReservation).displayCinemaPlacesEnrichedLayout(allPlaces, false,
-				((CinemaReservationBooleanArrayOptimised) cinemaReservation).rowReserved,
-				((CinemaReservationBooleanArrayOptimised) cinemaReservation).startingPosition,
-				((CinemaReservationBooleanArrayOptimised) cinemaReservation).endPosition);
+		cinemaReservation.displayCinemaPlacesEnrichedLayout(allPlaces, false,
+				cinemaReservation.rowReserved,
+				cinemaReservation.startingPosition,
+				cinemaReservation.endPosition);
 	}
 
 	protected static Class<? extends AbstractCinemaReservation> getConcreteSubclass() {
