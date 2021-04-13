@@ -7,18 +7,29 @@ import java.lang.reflect.InvocationTargetException;
  * and searching within the unidimensional array that is an element of the bi-dimensional one.
  *
  * @author <a href="mailto:Maxim.Cruceanu@outlook.com">p. Maxim</a>
- * @version 2021-04-08
+ * @author <a href="mailto:emil_soucaliuc@hotmail.com">Emil Șoucaliuc</a>
+ * @version 2021-04-13
  */
 public class CinemaReservationBooleanArrayOptimised extends AbstractCinemaReservation {
 
-	public static final int MAX_ROWS = 8;
-	public static final int PLACES_PER_ROW = 9;
 	public static final boolean FREE = false;
 	public static final boolean OCCUPIED = true;
-	private int rowReserved; // this stores the current row where we have validated a reservation
-	private int startingPosition; //...of the reservation
-	private int endPosition; //...of the reservation
-	private int nextPositionAdvance; // this stores how much should I go forward when scanning the row for (contiguous) blocks of free or occupied seats
+	/**
+	 * this stores the current row where we have validated a reservation
+	 */
+	private int rowReserved;
+	/**
+	 * starting position of the reservation
+	 */
+	private int startingPosition;
+	/**
+	 * end position of the reservation
+	 */
+	private int endPosition;
+	/**
+	 * this stores how much should I go forward when scanning the row for (contiguous) blocks of free or occupied seats
+	 */
+	private int nextPositionAdvance;
 
 	/**
 	 * Can be executed with an empty array of arguments <code>args</code>
@@ -42,19 +53,10 @@ public class CinemaReservationBooleanArrayOptimised extends AbstractCinemaReserv
 		final AbstractCinemaReservation cinemaReservation = getConcreteSubclass().getDeclaredConstructor().newInstance();
 		doCinemaReservation(cinemaReservation);
 		 */
+
 		proceedWithArguments(args);
 		final AbstractCinemaReservation cinemaReservation = getConcreteSubclass().getDeclaredConstructor().newInstance();
 		final boolean[][] allPlaces = getInitialCinemaPlacesStatus(cinemaReservation);
-		//	}
-		//	public static void mainOLD(String[] args) {
-		//		final CinemaReservationBooleanArrayOptimised cinemaReservation = new CinemaReservationBooleanArrayOptimised();
-		//		//        final int[] rowNumAndNumPlaces = cinemaReservation.displayReservationInvitation();
-		//		//        System.out.println(String.format("Entered rowNum = %d and numPlaces = %d.", rowNumAndNumPlaces[0], rowNumAndNumPlaces[1]));
-		//
-		//		// final boolean[][] allPlaces = new boolean[MAX_ROWS][PLACES_PER_ROW];
-		//		final boolean[][] allPlaces = cinemaReservation.createEmptyCinemaPlacesMatrix();
-		//
-		//		// cinemaReservation.randomlyPopulateCinemaPlacesMatrix(allPlaces);
 
 		System.out.println("Initial configuration of cinema:");
 		((CinemaReservationBooleanArrayOptimised) cinemaReservation).displayCinemaPlacesEnrichedLayout(allPlaces, false,
