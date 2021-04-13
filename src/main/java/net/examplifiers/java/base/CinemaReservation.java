@@ -66,7 +66,7 @@ public class CinemaReservation {
 		cinemaReservation.displayCinemaPlacesLayout(allPlaces);
 	}
 
-	private void findIfReservationIsPossible(final boolean[][] allPlaces) {
+	protected void findIfReservationIsPossible(final boolean[][] allPlaces) {
 		final int[] rowNumAndNumPlaces = fetchReservationNumbers();
 		final int rowNum = rowNumAndNumPlaces[0];
 		final int numPlaces = rowNumAndNumPlaces[1];
@@ -93,14 +93,11 @@ public class CinemaReservation {
 			displayNegativeReservationMessage(rowNum, numPlaces);
 		}
 
-		// now we display new reservation invitation
-		final int[] newValues = fetchReservationNumbers();
-		final int newRowNum = newValues[0];
-		final int newNumPlaces = newValues[1];
+		// now we run this method again, displaying a new reservation invitation and so on
 		findIfReservationIsPossible(allPlaces);
 	}
 
-	private boolean isThisPlaceEligible(final int crntPlaceIndex, final int numPlaces, final boolean[] rowPlaces) {
+	protected boolean isThisPlaceEligible(final int crntPlaceIndex, final int numPlaces, final boolean[] rowPlaces) {
 		if (!rowPlaces[crntPlaceIndex]) {
 			return false;
 		}
