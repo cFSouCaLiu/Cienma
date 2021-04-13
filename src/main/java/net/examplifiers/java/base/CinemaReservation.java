@@ -3,14 +3,13 @@ package net.examplifiers.java.base;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Les cinémas SimplonTheater vous demandent de mettre au point un logiciel simple pour permettre aux utilisateurs de
- * choisir des places de cinéma dans une salle au format fixe : 8 rangées avec dans chaque rangée 9 sièges.
- * Les utilisateurs doivent pouvoir spécifier la rangée dans laquelle ils veulent être placés ainsi que le nombre de places
- * à réserver.
- * Une fois la rangée choisie et le nombre de places spécifiées, vous devez vérifier s'il y a effectivement assez de place
- * sur la rangée :
- * - Si tel est le cas, vous affichez la représentation de la salle à l'utilisateur et proposez une nouvelle saisie.
- * - Sinon, vous spécifiez à l'utilisateur qu'il n'y a plus de place sur la rangée ou qu'il n'y en a pas assez.
+ * Performs the cinema reservation by treating the cinema places as a bi-dimensional <code>boolean</code> array
+ * and searching within the unidimensional array that is an element of the bi-dimensional one.
+ * 
+ * @author <a href="mailto:FSoucaliuc@outlook.com">Florin Șoucaliuc</a>
+ * @author <a href="mailto:emil_soucaliuc@hotmail.com">Emil Șoucaliuc</a>
+ * @author <a href="mailto:Maxim.Cruceanu@outlook.com">Maxim Cruceanu</a>
+ * @version 2021-04-07
  */
 public class CinemaReservation extends AbstractCinemaReservation {
 
@@ -28,36 +27,19 @@ public class CinemaReservation extends AbstractCinemaReservation {
 	public static void main(String[] args)
 			throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 		/*
-		 * TODO: reduce the code duplication in main
+		 * todo: reduce the code duplication in main
 		 * Simply calling AbstractCinemaReservation.main(args) will throw an InstantiationException in AbstractCinemaReservation.main().
 		 */
-		if (args.length >= 3) {
-			MAX_ROWS = Integer.parseInt(args[0]);
-			PLACES_PER_ROW = Integer.parseInt(args[1]);
-			POPULATES_CINEMA_PLACES = Boolean.parseBoolean(args[2]);
-		}
-
+		proceedWithArguments(args);
 		final AbstractCinemaReservation cinemaReservation = getConcreteSubclass().getDeclaredConstructor().newInstance();
-		final boolean[][] allPlaces = cinemaReservation.createEmptyCinemaPlacesMatrix();
-		if (POPULATES_CINEMA_PLACES) {
-			cinemaReservation.randomlyPopulateCinemaPlacesMatrix(allPlaces);
-		}
-
-		System.out.println("Initial configuration of cinema:");
-		cinemaReservation.displayCinemaPlacesLayout(allPlaces);
-		System.out.println();
-
-		cinemaReservation.findIfReservationIsPossible(allPlaces);
-
-		System.out.println("Final configuration of cinema:");
-		cinemaReservation.displayCinemaPlacesLayout(allPlaces);
+		doCinemaReservation(cinemaReservation);
 	}
 
 	protected static Class<? extends AbstractCinemaReservation> getConcreteSubclass() {
 		return CinemaReservation.class;
 	}
 	
-	protected void findIfReservationIsPossible(final boolean[][] allPlaces) {
+	protected void doReservationIfPossible(final boolean[][] allPlaces) {
 		final int[] rowNumAndNumPlaces = fetchReservationNumbers();
 		final int rowNum = rowNumAndNumPlaces[0];
 		final int numPlaces = rowNumAndNumPlaces[1];
@@ -85,7 +67,7 @@ public class CinemaReservation extends AbstractCinemaReservation {
 		}
 
 		// now we run this method again, displaying a new reservation invitation and so on
-		findIfReservationIsPossible(allPlaces);
+		doReservationIfPossible(allPlaces);
 	}
 
 	protected boolean isThisPlaceEligible(final int crntPlaceIndex, final int numPlaces, final boolean[] rowPlaces) {
