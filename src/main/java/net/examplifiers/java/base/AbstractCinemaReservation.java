@@ -39,22 +39,23 @@ import java.util.Scanner;
  * 4
  * A quelle rangée voulez vous aller ?
  * 3
- * 
+ *
  *      --------------------------------------------
- * 
- * 
+ *
+ *
  * 0 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ]
- * 1 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ] 
- * 2 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ] 
- * 3 | [ X ][ X ][ X ][ X ][ _ ][ _ ][ _ ][ _ ][ _ ] 
+ * 1 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ]
+ * 2 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ]
+ * 3 | [ X ][ X ][ X ][ X ][ _ ][ _ ][ _ ][ _ ][ _ ]
  * 4 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ]
  * 5 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ]
  * 6 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ]
  * 7 | [ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ][ _ ]
- *       0    1    2    3    4    5    6    7    8   
+ *       0    1    2    3    4    5    6    7    8
  * </pre>
- * 
+ *
  * @author <a href="mailto:emil_soucaliuc@hotmail.com">Emil Șoucaliuc</a>
+ * @author <a href="mailto:Maxim.Cruceanu@outlook.com">p. Maxim</a>
  * @version 2021-04-13
  */
 public abstract class AbstractCinemaReservation {
@@ -88,7 +89,7 @@ public abstract class AbstractCinemaReservation {
 	 * </li>
 	 * </ul>
 	 */
-	public static void main(String[] args)
+	public static void main(final String[] args)
 			throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 		proceedWithArguments(args);
 		final AbstractCinemaReservation cinemaReservation = getConcreteSubclass().getDeclaredConstructor().newInstance();
@@ -98,20 +99,25 @@ public abstract class AbstractCinemaReservation {
 	protected static Class<? extends AbstractCinemaReservation> getConcreteSubclass() {
 		return AbstractCinemaReservation.class;
 	}
-	
-	protected static final void proceedWithArguments(String[] args) {
+
+	protected static final void proceedWithArguments(final String[] args) {
 		if (args.length >= 3) {
 			MAX_ROWS = Integer.parseInt(args[0]);
 			PLACES_PER_ROW = Integer.parseInt(args[1]);
 			POPULATES_CINEMA_PLACES = Boolean.parseBoolean(args[2]);
 		}
 	}
-	
-	protected static final void doCinemaReservation(AbstractCinemaReservation concreteCinemaReservation) {
+
+	protected static final boolean[][] getInitialCinemaPlacesStatus(final AbstractCinemaReservation concreteCinemaReservation) {
 		final boolean[][] allPlaces = concreteCinemaReservation.createEmptyCinemaPlacesMatrix();
 		if (POPULATES_CINEMA_PLACES) {
 			concreteCinemaReservation.randomlyPopulateCinemaPlacesMatrix(allPlaces);
 		}
+		return allPlaces;
+	}
+
+	protected static final void doCinemaReservation(final AbstractCinemaReservation concreteCinemaReservation) {
+		final boolean[][] allPlaces = getInitialCinemaPlacesStatus(concreteCinemaReservation);
 
 		System.out.println("Initial configuration of cinema:");
 		concreteCinemaReservation.displayCinemaPlacesLayout(allPlaces);
@@ -143,7 +149,8 @@ public abstract class AbstractCinemaReservation {
 		return new int[] { rowNum, numPlaces };
 	}
 
-	protected final void displayAffirmativeReservationMessage(final int rowNum, final int numPlaces, final int firstFreePlaceIndex) {
+	protected final void displayAffirmativeReservationMessage(final int rowNum, final int numPlaces,
+			final int firstFreePlaceIndex) {
 		System.out.println(String.format("Found and reserved %d consecutive places on row %d starting with place no. %d"
 				+ " and ending with place no. %d.", numPlaces, rowNum, firstFreePlaceIndex, (firstFreePlaceIndex + numPlaces - 1)));
 	}
@@ -167,8 +174,7 @@ public abstract class AbstractCinemaReservation {
 		for (int k = 0; k < PLACES_PER_ROW; k++) {
 			if (k == 0) { // the row prefix
 				System.out.print("      " + k + "  ");
-			}
-			else {
+			} else {
 				System.out.print("  " + k + "  ");
 			}
 		}

@@ -5,11 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Performs the cinema reservation by treating the cinema places as a bi-dimensional <code>boolean</code> array
  * and searching within the unidimensional array that is an element of the bi-dimensional one.
- * 
+ *
  * @author <a href="mailto:FSoucaliuc@outlook.com">Florin Șoucaliuc</a>
  * @author <a href="mailto:emil_soucaliuc@hotmail.com">Emil Șoucaliuc</a>
- * @author <a href="mailto:Maxim.Cruceanu@outlook.com">Maxim Cruceanu</a>
- * @version 2021-04-07
+ * @author <a href="mailto:Maxim.Cruceanu@outlook.com">p. Maxim</a>
+ * @version 2021-04-13
  */
 public class CinemaReservation extends AbstractCinemaReservation {
 
@@ -24,7 +24,7 @@ public class CinemaReservation extends AbstractCinemaReservation {
 	 * </li>
 	 * </ul>
 	 */
-	public static void main(String[] args)
+	public static void main(final String[] args)
 			throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 		/*
 		 * todo: reduce the code duplication in main
@@ -38,7 +38,7 @@ public class CinemaReservation extends AbstractCinemaReservation {
 	protected static Class<? extends AbstractCinemaReservation> getConcreteSubclass() {
 		return CinemaReservation.class;
 	}
-	
+
 	protected void doReservationIfPossible(final boolean[][] allPlaces) {
 		final int[] rowNumAndNumPlaces = fetchReservationNumbers();
 		final int rowNum = rowNumAndNumPlaces[0];
